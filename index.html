@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Babylon University Graduation Invitation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0f0505; 
+            background-image: radial-gradient(circle at center, #2a0808, #000000);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden; 
+            font-family: 'Dancing Script', cursive;
+        }
+
+        /* ------------------ توقيع المطور (Developed By) ------------------ */
+        .developer-credit {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            color: rgba(230, 207, 163, 0.6); /* لون Parchment شفاف قليلاً */
+            font-size: 18px;
+            z-index: 100;
+            letter-spacing: 1px;
+            pointer-events: none;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+
+        /* ------------------ منطقة الرسايل المتوزعة ------------------ */
+        #global-flying-zone {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        /* ------------------ الحاوية الرئيسية للمظروف ------------------ */
+        #envelope-wrapper {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 380px; 
+            height: 260px;
+            cursor: pointer;
+            z-index: 30;
+        }
+
+        .sway-animation {
+            animation: floatSway 4s ease-in-out infinite;
+        }
+
+        @keyframes floatSway {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            25% { transform: translate(-50%, -60px) rotate(1.5deg); }
+            50% { transform: translate(-50%, -50%) rotate(0deg); }
+            75% { transform: translate(-50%, -40px) rotate(-1.5deg); }
+            100% { transform: translate(-50%, -50%) rotate(0deg); }
+        }
+
+        .envelope-part {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 6px;
+            transition: opacity 1s ease;
+        }
+
+        #envelope-back {
+            background-image: url('harrypotterletter.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.35) contrast(1.2);
+            z-index: 1;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+        }
+
+        #flying-zone {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2;
+            overflow: visible;
+        }
+
+        #envelope-front {
+            background-image: url('harrypotterletter.jpg');
+            background-size: cover;
+            background-position: center;
+            clip-path: polygon(0 0, 50% 55%, 100% 0, 100% 100%, 0 100%);
+            z-index: 3;
+        }
+
+        #envelope-flap {
+            background-image: url('harrypotterletter.jpg');
+            background-size: cover;
+            background-position: center;
+            clip-path: polygon(0 0, 100% 0, 50% 55%);
+            transform-origin: top;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s ease;
+            z-index: 4;
+        }
+
+        .open-flap { transform: rotateX(180deg) !important; }
+
+        /* ------------------ رسايل الظرف ------------------ */
+        .fly-letter {
+            position: absolute;
+            bottom: 20px; left: 50%;
+            width: 100px; height: 70px;
+            margin-left: -50px;
+            background-image: url('harrypotterletter.jpg');
+            background-size: cover;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            opacity: 0;
+            will-change: transform, opacity;
+            animation: flyOutAnimation var(--duration) ease-in-out forwards;
+            animation-delay: var(--delay);
+        }
+
+        @keyframes flyOutAnimation {
+            0% { transform: translate(0, 0) scale(0.2) rotate(0deg); opacity: 0; }
+            5% { opacity: 1; }
+            20% { transform: translate(var(--mid-x), var(--mid-y)) scale(0.6) rotate(var(--mid-rot)); opacity: 1; }
+            80% { opacity: 0.8; }
+            100% { transform: translate(var(--end-x), var(--end-y)) scale(var(--end-scale)) rotate(var(--end-rot)); opacity: 0; }
+        }
+
+        /* ------------------ الرسايل المتوزعة ------------------ */
+        .ambient-letter {
+            position: absolute;
+            width: 100px; height: 70px;
+            background-image: url('harrypotterletter.jpg');
+            background-size: cover;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            opacity: 0;
+            will-change: transform, opacity;
+            animation: ambientFly var(--duration) linear infinite;
+            animation-delay: var(--delay);
+        }
+
+        @keyframes ambientFly {
+            0% { transform: translate(var(--start-x), var(--start-y)) scale(var(--scale)) rotate(var(--start-rot)); opacity: 0; }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% { transform: translate(var(--end-x), var(--end-y)) scale(var(--scale)) rotate(var(--end-rot)); opacity: 0; }
+        }
+
+        /* ------------------ الدعوة الرئيسية ------------------ */
+        #letter-container {
+            display: none; 
+            background-color: #e6cfa3;
+            background-image: url('https://www.transparenttextures.com/patterns/parchment.png');
+            width: 90%;
+            max-width: 550px; 
+            padding: 40px;
+            box-sizing: border-box;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+            color: #1a1a1a;
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%); 
+            z-index: 50; 
+            border: 2px solid #d3a625;
+            text-align: center;
+            animation: letterAppear 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
+                       hoverLetter 4s ease-in-out infinite 1.5s;
+        }
+
+        @keyframes letterAppear {
+            0% { opacity: 0; transform: translate(-50%, -30%) scale(0.8); filter: blur(5px); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); filter: blur(0); }
+        }
+
+        @keyframes hoverLetter {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            50% { transform: translate(-50%, -54%) rotate(1.5deg); }
+            100% { transform: translate(-50%, -50%) rotate(0deg); }
+        }
+
+        .fly-away-main-letter {
+            animation: mainLetterFlyAway 2s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+        }
+
+        @keyframes mainLetterFlyAway {
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+            20% { opacity: 1; transform: translate(-50%, -40%) scale(1.05) rotate(-2deg); } 
+            100% { opacity: 0; transform: translate(-50%, -150vh) scale(0.5) rotate(15deg); } 
+        }
+
+        .header h1 { font-family: 'Dancing Script', cursive; font-size: 35px; margin: 0; font-weight: 700; color: #111; }
+        .header h2 { font-family: 'Dancing Script', cursive; font-size: 24px; margin: 5px 0 0 0; font-weight: 700; color: #4a0000; }
+        
+        .letter-content { font-family: 'Dancing Script', cursive; font-size: 24px; line-height: 1.6; text-align: justify; margin-top: 20px; }
+        .letter-content strong { color: #740001; font-weight: bold; }
+        .footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 40px; }
+        .signature { font-family: 'Dancing Script', cursive; font-size: 26px; }
+        .wax-seal { width: 70px; height: 70px; background: radial-gradient(circle, #8b0000, #4a0000); border-radius: 50%; box-shadow: 2px 5px 10px rgba(0,0,0,0.5), inset 0 0 10px rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; color: #e6cfa3; font-family: 'Cinzel', serif; font-size: 30px; font-weight: bold; text-shadow: 1px 1px 2px #000; }
+    </style>
+</head>
+<body>
+
+    <div class="developer-credit">Developed by Sarraa AlKhafaji</div>
+
+    <div id="global-flying-zone"></div>
+
+    <div id="envelope-wrapper" class="sway-animation" onclick="openInvitation()">
+        <div id="envelope-back" class="envelope-part"></div>
+        <div id="flying-zone"></div> 
+        <div id="envelope-front" class="envelope-part"></div>
+        <div id="envelope-flap" class="envelope-part"></div>
+    </div>
+
+    <div id="letter-container">
+        <div class="header">
+            <h1>University of Babylon</h1>
+            <h2>College of Information Technology</h2>
+        </div>
+        <div class="letter-content">
+            <p>Dear Guest,</p>
+            <p>We are pleased to inform you that you are formally invited to attend the graduation ceremony for the <strong>Networks Students</strong>.</p>
+            <p>Your presence is requested on <strong>Monday, April 13th</strong>.</p>
+            <p>The ceremony will commence at exactly <strong>11:00 AM</strong> in the <strong>Martyr Al-Sadr Hall</strong>. Please do not be late.</p>
+        </div>
+        <div class="footer">
+            <div class="signature">Yours Sincerely,<br>Networks Department</div>
+            <div class="wax-seal">IT</div>
+        </div>
+    </div>
+
+    <audio id="hp-audio" loop autoplay preload="auto">
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const audio = document.getElementById('hp-audio');
+            audio.volume = 0.6;
+            let playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    document.body.addEventListener('click', function playOnInteraction() {
+                        audio.play();
+                        document.body.removeEventListener('click', playOnInteraction);
+                    }, { once: true });
+                });
+            }
+        });
+
+        function triggerInitialFlyingLetters() {
+            const container = document.getElementById('flying-zone');
+            const numEnvelopes = 80; 
+            for (let i = 0; i < numEnvelopes; i++) {
+                let letter = document.createElement('div');
+                letter.className = 'fly-letter';
+                let midX = (Math.random() - 0.5) * 200; 
+                let midY = (Math.random() * -200) - 50; 
+                let midRot = (Math.random() - 0.5) * 90;
+                let angle = Math.random() * Math.PI * 2; 
+                let distance = Math.random() * 800 + 400; 
+                let endX = Math.cos(angle) * distance; 
+                let endY = Math.sin(angle) * distance; 
+                letter.style.setProperty('--mid-x', `${midX}px`);
+                letter.style.setProperty('--mid-y', `${midY}px`);
+                letter.style.setProperty('--mid-rot', `${midRot}deg`);
+                letter.style.setProperty('--end-x', `${endX}px`);
+                letter.style.setProperty('--end-y', `${endY}px`);
+                letter.style.setProperty('--end-scale', Math.random() * 0.4 + 0.2);
+                letter.style.setProperty('--end-rot', `${(Math.random() - 0.5) * 1080}deg`);
+                letter.style.setProperty('--duration', `${Math.random() * 6 + 6}s`); 
+                letter.style.setProperty('--delay', `${Math.random() * 1.5}s`);
+                container.appendChild(letter);
+            }
+        }
+
+        function startDistributedLetters() {
+            const globalZone = document.getElementById('global-flying-zone');
+            const numAmbient = 60; 
+            for (let i = 0; i < numAmbient; i++) {
+                let letter = document.createElement('div');
+                letter.className = 'ambient-letter';
+                let startX = Math.random() * 100;
+                let endX = Math.random() * 100;
+                letter.style.setProperty('--start-x', `${startX}vw`);
+                letter.style.setProperty('--start-y', `-20vh`);
+                letter.style.setProperty('--end-x', `${endX}vw`);
+                letter.style.setProperty('--end-y', `110vh`);
+                letter.style.setProperty('--scale', Math.random() * 0.4 + 0.2);
+                letter.style.setProperty('--start-rot', `${(Math.random() - 0.5) * 90}deg`);
+                letter.style.setProperty('--end-rot', `${(Math.random() - 0.5) * 720}deg`);
+                letter.style.setProperty('--duration', `${Math.random() * 10 + 10}s`); 
+                letter.style.setProperty('--delay', `${Math.random() * 15}s`);
+                globalZone.appendChild(letter);
+            }
+        }
+
+        function openInvitation() {
+            const wrapper = document.getElementById('envelope-wrapper');
+            const flap = document.getElementById('envelope-flap');
+            const envelopeParts = document.querySelectorAll('.envelope-part');
+            const letter = document.getElementById('letter-container');
+            const audio = document.getElementById('hp-audio');
+
+            wrapper.classList.remove('sway-animation');
+            flap.classList.add('open-flap');
+            
+            if(audio.paused) {
+                audio.play().catch(e => console.log(e));
+            }
+
+            setTimeout(() => {
+                triggerInitialFlyingLetters();
+                setTimeout(() => {
+                    envelopeParts.forEach(part => {
+                        part.style.opacity = '0'; 
+                    });
+                    setTimeout(() => {
+                        letter.style.display = 'block';
+                        setTimeout(() => {
+                            letter.classList.add('fly-away-main-letter');
+                            startDistributedLetters();
+                        }, 12000); 
+                    }, 500);
+                }, 1500); 
+            }, 400); 
+        }
+    </script>
+</body>
+</html>
