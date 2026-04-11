@@ -16,14 +16,15 @@
         }
 
         .developer-credit {
-            position: fixed; bottom: 15px; right: 15px;
-            color: rgba(230, 207, 163, 0.6); font-size: 14px; z-index: 100;
+            position: fixed; bottom: 20px; right: 20px;
+            color: rgba(230, 207, 163, 0.6); font-size: 16px; z-index: 100;
         }
 
+        /* حاوية المظروف */
         #envelope-wrapper {
             position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 280px; height: 190px;
+            width: 290px; height: 200px;
             cursor: pointer; z-index: 30;
         }
 
@@ -34,20 +35,21 @@
         .sway-animation { animation: floatSway 4s ease-in-out infinite; }
         @keyframes floatSway {
             0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
-            50% { transform: translate(-50%, -55%) rotate(1deg); }
+            50% { transform: translate(-50%, -55%) rotate(1.5deg); }
         }
 
         .envelope-part { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 6px; transition: opacity 1s ease; }
 
         #envelope-back {
             background-image: url('harrypotterletter.jpg');
-            background-size: cover; filter: brightness(0.35);
-            z-index: 1; /* الطبقة الخلفية */
+            background-size: cover; filter: brightness(0.35) contrast(1.2);
+            z-index: 1; /* الخلفية بالأسفل */
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
         }
 
         #flying-zone {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 2; /* المسجات تطلع هنا (بين الخلف والأمام) */
+            z-index: 2; /* الرسائل الطائرة بالوسط */
             pointer-events: none;
         }
 
@@ -55,7 +57,7 @@
             background-image: url('harrypotterletter.jpg');
             background-size: cover;
             clip-path: polygon(0 0, 50% 55%, 100% 0, 100% 100%, 0 100%);
-            z-index: 3; /* الوجه الأمامي */
+            z-index: 3; /* الوجه الأمامي فوق الرسائل */
         }
 
         #envelope-flap {
@@ -63,49 +65,45 @@
             background-size: cover;
             clip-path: polygon(0 0, 100% 0, 50% 55%);
             transform-origin: top; z-index: 4;
-            transition: transform 0.8s ease;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .open-flap { transform: rotateX(180deg); }
+        .open-flap { transform: rotateX(180deg) !important; }
 
-        /* المسجات الطائرة من داخل الظرف */
+        /* ستايل الرسائل الطائرة الصغيره */
         .fly-letter {
-            position: absolute; top: 50%; left: 50%;
-            width: 60px; height: 40px;
+            position: absolute; bottom: 20px; left: 50%;
+            width: 80px; height: 55px; margin-left: -40px;
             background-image: url('harrypotterletter.jpg');
-            background-size: cover; border-radius: 3px;
+            background-size: cover; border-radius: 4px;
             opacity: 0; z-index: 2;
         }
 
-        /* الرسالة الرئيسية والأنيميشن الخاص بطيرانها */
+        /* ستايل الرسالة الرئيسية (الدعوة) */
         #letter-container {
             display: none; background-color: #e6cfa3;
             background-image: url('https://www.transparenttextures.com/patterns/parchment.png');
-            width: 85%; max-width: 500px; padding: 25px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.9);
-            position: absolute; top: 50%; left: 50%;
+            width: 90%; max-width: 550px; padding: 30px;
+            box-sizing: border-box; box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+            color: #1a1a1a; position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%); z-index: 50; border: 2px solid #d3a625;
+            text-align: center;
         }
 
-        .letter-appear { animation: letterAppear 1.2s forwards; }
-        .letter-fly-away { animation: mainLetterFlyAway 2.5s ease-in forwards !important; }
+        .letter-content { font-size: 20px; line-height: 1.6; text-align: justify; margin-top: 20px; }
+        .letter-content strong { color: #740001; }
 
-        @keyframes letterAppear {
-            0% { opacity: 0; transform: translate(-50%, -20%) scale(0.5); }
-            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        }
-
+        /* أنيميشن الطيران للرسالة الرئيسية */
+        .fly-away-main-letter { animation: mainLetterFlyAway 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards !important; }
         @keyframes mainLetterFlyAway {
-            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-            100% { transform: translate(-50%, -150vh) scale(0.5) rotate(10deg); opacity: 0; }
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -150vh) scale(0.5) rotate(15deg); }
         }
 
-        .header h1 { font-size: 26px; margin: 0; }
-        .letter-content { font-size: 18px; line-height: 1.4; }
-        .footer { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
-        .wax-seal { width: 50px; height: 50px; background: #8b0000; border-radius: 50%; color: #e6cfa3; display: flex; justify-content: center; align-items: center; font-family: 'Cinzel'; }
-
-        #global-flying-zone { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 60; }
+        .wax-seal { width: 60px; height: 60px; background: radial-gradient(circle, #8b0000, #4a0000); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #e6cfa3; font-family: 'Cinzel'; font-size: 24px; }
+        
+        #global-flying-zone { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 10; overflow: hidden; }
+        .ambient-letter { position: absolute; width: 80px; height: 55px; background-image: url('harrypotterletter.jpg'); background-size: cover; opacity: 0; z-index: 5; }
     </style>
 </head>
 <body>
@@ -121,17 +119,18 @@
     </div>
 
     <div id="letter-container">
-        <div class="header">
-            <h1>University of Babylon</h1>
-            <h2>IT College</h2>
+        <div class="header" style="text-align: center;">
+            <h1 style="font-size: 30px; margin: 0;">University of Babylon</h1>
+            <h2 style="font-size: 22px; margin: 5px 0; color: #4a0000;">College of Information Technology</h2>
         </div>
         <div class="letter-content">
             <p>Dear Guest,</p>
-            <p>You are invited to the graduation of <strong>Networks Students</strong>.</p>
-            <p>Monday, April 13th at 11:00 AM.</p>
+            <p>We are pleased to inform you that you are formally invited to attend the graduation ceremony for the <strong>Networks Students</strong>.</p>
+            <p>Your presence is requested on <strong>Monday, April 13th</strong>.</p>
+            <p>The ceremony will commence at exactly <strong>11:00 AM</strong> in the <strong>Martyr Al-Sadr Hall</strong>. Please do not be late.</p>
         </div>
-        <div class="footer">
-            <div class="signature">Networks Dept.</div>
+        <div class="footer" style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px;">
+            <div class="signature" style="font-size: 22px; text-align: left;">Yours Sincerely,<br>Networks Department</div>
             <div class="wax-seal">IT</div>
         </div>
     </div>
@@ -147,57 +146,64 @@
 
             wrapper.classList.remove('sway-animation');
             flap.classList.add('open-flap');
-            audio.play().catch(() => {});
+            audio.play().catch(e => console.log(e));
 
-            // 1. خروج المسجات الصغيرة من داخل الظرف
+            // خروج الرسائل من داخل المظروف
             setTimeout(() => {
                 const zone = document.getElementById('flying-zone');
-                for (let i = 0; i < 50; i++) {
-                    let p = document.createElement('div');
-                    p.className = 'fly-letter';
-                    zone.appendChild(p);
+                for (let i = 0; i < 60; i++) {
+                    let l = document.createElement('div');
+                    l.className = 'fly-letter';
                     
                     let angle = Math.random() * Math.PI * 2;
                     let dist = Math.random() * 600 + 400;
-                    
-                    p.animate([
-                        { transform: 'translate(-50%, -50%) scale(0.1)', opacity: 0 },
-                        { opacity: 1, offset: 0.2 },
-                        { transform: `translate(${Math.cos(angle)*dist}px, ${Math.sin(angle)*dist}px) rotate(${Math.random()*1000}deg) scale(0.6)`, opacity: 0 }
-                    ], { duration: 4000, delay: Math.random() * 1000, fill: 'forwards' });
+                    let x = Math.cos(angle) * dist;
+                    let y = Math.sin(angle) * dist;
+
+                    l.animate([
+                        { transform: 'translate(0, 0) scale(0.2)', opacity: 0 },
+                        { opacity: 1, offset: 0.1 },
+                        { transform: `translate(${x}px, ${y}px) scale(0.5) rotate(${Math.random()*1000}deg)`, opacity: 0 }
+                    ], {
+                        duration: 5000 + Math.random() * 3000,
+                        delay: Math.random() * 1500,
+                        easing: 'ease-out',
+                        fill: 'forwards'
+                    });
+                    zone.appendChild(l);
                 }
-            }, 600);
 
-            // 2. ظهور الرسالة الرئيسية ثم طيرانها
-            setTimeout(() => {
-                document.querySelectorAll('.envelope-part').forEach(el => el.style.opacity = '0');
-                letter.style.display = 'block';
-                letter.classList.add('letter-appear');
-
-                // بعد 8 ثواني من ظهورها، تطير الرسالة ويملأ الجو رسايل
+                // إخفاء المظروف وظهور الرسالة الأصلية
                 setTimeout(() => {
-                    letter.classList.add('letter-fly-away');
-                    startAmbientLetters();
-                }, 8000);
-            }, 2000);
+                    document.querySelectorAll('.envelope-part').forEach(p => p.style.opacity = '0');
+                    letter.style.display = 'block';
+                    
+                    // طيران الرسالة الأصلية بعد 12 ثانية
+                    setTimeout(() => {
+                        letter.classList.add('fly-away-main-letter');
+                        startAmbientRain();
+                    }, 12000);
+                }, 1500);
+            }, 600);
         }
 
-        function startAmbientLetters() {
+        function startAmbientRain() {
             const gZone = document.getElementById('global-flying-zone');
             setInterval(() => {
-                if(gZone.children.length < 40) {
-                    let l = document.createElement('div');
-                    l.className = 'fly-letter'; 
-                    l.style.left = Math.random() * 100 + 'vw';
-                    l.style.top = '-10vh';
-                    gZone.appendChild(l);
-                    l.animate([
-                        { transform: `translate(0, 0) rotate(0deg)`, opacity: 0.8 },
+                if(gZone.children.length < 50) {
+                    let al = document.createElement('div');
+                    al.className = 'ambient-letter';
+                    al.style.left = Math.random() * 100 + 'vw';
+                    al.style.top = '-10vh';
+                    gZone.appendChild(al);
+                    al.animate([
+                        { transform: 'translateY(0) rotate(0deg)', opacity: 0 },
+                        { opacity: 0.7, offset: 0.2 },
                         { transform: `translate(${(Math.random()-0.5)*200}px, 110vh) rotate(720deg)`, opacity: 0 }
-                    ], { duration: 7000 });
-                    setTimeout(() => l.remove(), 7000);
+                    ], { duration: 8000 + Math.random() * 4000 });
+                    setTimeout(() => al.remove(), 12000);
                 }
-            }, 300);
+            }, 400);
         }
     </script>
 </body>
