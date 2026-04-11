@@ -7,183 +7,110 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet">
     <style>
         body {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             background-color: #0f0505; 
             background-image: radial-gradient(circle at center, #2a0808, #000000);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow: hidden; 
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; overflow: hidden; 
             font-family: 'Dancing Script', cursive;
         }
 
-        /* ------------------ توقيع المطور ------------------ */
         .developer-credit {
-            position: fixed;
-            bottom: 15px;
-            right: 15px;
-            color: rgba(230, 207, 163, 0.6);
-            font-size: 14px; /* صغرت الخط للموبايل */
-            z-index: 100;
-            pointer-events: none;
+            position: fixed; bottom: 15px; right: 15px;
+            color: rgba(230, 207, 163, 0.6); font-size: 14px; z-index: 100;
         }
 
-        #global-flying-zone {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            pointer-events: none;
-            z-index: 10;
-            overflow: hidden;
-        }
-
-        /* ------------------ الحاوية الرئيسية (قياسات موبايل) ------------------ */
         #envelope-wrapper {
-            position: absolute;
-            top: 50%; left: 50%;
+            position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 280px;  /* عرض اصغر للموبايل */
-            height: 190px; /* طول متناسق */
-            cursor: pointer;
-            z-index: 30;
+            width: 280px; height: 190px;
+            cursor: pointer; z-index: 30;
         }
 
-        /* قياسات الشاشات الكبيرة (Desktop) */
         @media (min-width: 768px) {
-            #envelope-wrapper {
-                width: 380px;
-                height: 260px;
-            }
-            .developer-credit { font-size: 18px; }
+            #envelope-wrapper { width: 380px; height: 260px; }
         }
 
-        .sway-animation {
-            animation: floatSway 4s ease-in-out infinite;
-        }
-
+        .sway-animation { animation: floatSway 4s ease-in-out infinite; }
         @keyframes floatSway {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            25% { transform: translate(-50%, -55%) rotate(1.5deg); }
-            50% { transform: translate(-50%, -50%) rotate(0deg); }
-            75% { transform: translate(-50%, -45%) rotate(-1.5deg); }
-            100% { transform: translate(-50%, -50%) rotate(0deg); }
+            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+            50% { transform: translate(-50%, -55%) rotate(1deg); }
         }
 
-        .envelope-part {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            border-radius: 6px;
-            transition: opacity 1s ease;
-        }
+        .envelope-part { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 6px; transition: opacity 1s ease; }
 
         #envelope-back {
             background-image: url('harrypotterletter.jpg');
-            background-size: cover;
-            background-position: center;
-            filter: brightness(0.35) contrast(1.2);
-            z-index: 1;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.9);
+            background-size: cover; filter: brightness(0.35);
+            z-index: 1; /* الطبقة الخلفية */
         }
 
         #flying-zone {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 2;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2; /* المسجات تطلع هنا (بين الخلف والأمام) */
+            pointer-events: none;
         }
 
         #envelope-front {
             background-image: url('harrypotterletter.jpg');
             background-size: cover;
-            background-position: center;
             clip-path: polygon(0 0, 50% 55%, 100% 0, 100% 100%, 0 100%);
-            z-index: 3;
+            z-index: 3; /* الوجه الأمامي */
         }
 
         #envelope-flap {
             background-image: url('harrypotterletter.jpg');
             background-size: cover;
-            background-position: center;
             clip-path: polygon(0 0, 100% 0, 50% 55%);
-            transform-origin: top;
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s ease;
-            z-index: 4;
+            transform-origin: top; z-index: 4;
+            transition: transform 0.8s ease;
         }
 
-        .open-flap { transform: rotateX(180deg) !important; }
+        .open-flap { transform: rotateX(180deg); }
 
-        /* ------------------ الرسايل المتطايرة ------------------ */
-        .fly-letter, .ambient-letter {
-            position: absolute;
-            width: 70px; height: 50px; /* اصغر للموبايل */
+        /* المسجات الطائرة من داخل الظرف */
+        .fly-letter {
+            position: absolute; top: 50%; left: 50%;
+            width: 60px; height: 40px;
             background-image: url('harrypotterletter.jpg');
-            background-size: cover;
-            border-radius: 3px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            opacity: 0;
+            background-size: cover; border-radius: 3px;
+            opacity: 0; z-index: 2;
         }
 
-        /* ------------------ تصميم الرسالة (Responsive) ------------------ */
+        /* الرسالة الرئيسية والأنيميشن الخاص بطيرانها */
         #letter-container {
-            display: none; 
-            background-color: #e6cfa3;
+            display: none; background-color: #e6cfa3;
             background-image: url('https://www.transparenttextures.com/patterns/parchment.png');
-            width: 85%;
-            max-width: 500px; 
-            padding: 25px; /* حاشية اقل للموبايل */
-            box-sizing: border-box;
+            width: 85%; max-width: 500px; padding: 25px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.9);
-            color: #1a1a1a;
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%); 
-            z-index: 50; 
-            border: 2px solid #d3a625;
-            text-align: center;
-            animation: letterAppear 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); z-index: 50; border: 2px solid #d3a625;
         }
+
+        .letter-appear { animation: letterAppear 1.2s forwards; }
+        .letter-fly-away { animation: mainLetterFlyAway 2.5s ease-in forwards !important; }
 
         @keyframes letterAppear {
-            0% { opacity: 0; transform: translate(-50%, -30%) scale(0.8); }
+            0% { opacity: 0; transform: translate(-50%, -20%) scale(0.5); }
             100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         }
 
-        .header h1 { font-size: 26px; margin: 0; color: #111; }
-        .header h2 { font-size: 18px; margin: 5px 0; color: #4a0000; }
-        
-        .letter-content { font-size: 18px; line-height: 1.4; margin-top: 15px; text-align: center; }
-        
-        .footer { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-top: 25px; 
-        }
-        .signature { font-size: 18px; text-align: left; }
-        .wax-seal { 
-            width: 50px; height: 50px; 
-            background: radial-gradient(circle, #8b0000, #4a0000); 
-            border-radius: 50%; 
-            color: #e6cfa3; 
-            font-family: 'Cinzel', serif; 
-            font-size: 20px; 
-            display: flex; justify-content: center; align-items: center; 
+        @keyframes mainLetterFlyAway {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -150vh) scale(0.5) rotate(10deg); opacity: 0; }
         }
 
-        /* تعديلات للـ Desktop */
-        @media (min-width: 768px) {
-            .header h1 { font-size: 35px; }
-            .header h2 { font-size: 24px; }
-            .letter-content { font-size: 24px; padding: 0 20px; }
-            .signature { font-size: 24px; }
-            .wax-seal { width: 70px; height: 70px; font-size: 30px; }
-        }
+        .header h1 { font-size: 26px; margin: 0; }
+        .letter-content { font-size: 18px; line-height: 1.4; }
+        .footer { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
+        .wax-seal { width: 50px; height: 50px; background: #8b0000; border-radius: 50%; color: #e6cfa3; display: flex; justify-content: center; align-items: center; font-family: 'Cinzel'; }
+
+        #global-flying-zone { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 60; }
     </style>
 </head>
 <body>
 
     <div class="developer-credit">Developed by Sarraa AlKhafaji</div>
-
     <div id="global-flying-zone"></div>
 
     <div id="envelope-wrapper" class="sway-animation" onclick="openInvitation()">
@@ -196,107 +123,81 @@
     <div id="letter-container">
         <div class="header">
             <h1>University of Babylon</h1>
-            <h2>College of Information Technology</h2>
+            <h2>IT College</h2>
         </div>
         <div class="letter-content">
             <p>Dear Guest,</p>
-            <p>We are pleased to inform you that you are formally invited to attend the graduation ceremony for the <strong>Networks Students</strong>.</p>
-            <p>Your presence is requested on <strong>Monday, April 13th</strong>.</p>
-            <p>The ceremony will commence at <strong>11:00 AM</strong> in the <strong>Martyr Al-Sadr Hall</strong>.</p>
+            <p>You are invited to the graduation of <strong>Networks Students</strong>.</p>
+            <p>Monday, April 13th at 11:00 AM.</p>
         </div>
         <div class="footer">
-            <div class="signature">Yours Sincerely,<br>Networks Department</div>
+            <div class="signature">Networks Dept.</div>
             <div class="wax-seal">IT</div>
         </div>
     </div>
 
-    <audio id="hp-audio" loop preload="auto">
-        <source src="music.mp3" type="audio/mpeg">
-    </audio>
+    <audio id="hp-audio" loop><source src="music.mp3" type="audio/mpeg"></audio>
 
     <script>
-        // دالة لفتح الدعوة
         function openInvitation() {
             const wrapper = document.getElementById('envelope-wrapper');
             const flap = document.getElementById('envelope-flap');
-            const envelopeParts = document.querySelectorAll('.envelope-part');
             const letter = document.getElementById('letter-container');
             const audio = document.getElementById('hp-audio');
 
             wrapper.classList.remove('sway-animation');
             flap.classList.add('open-flap');
-            
-            audio.play().catch(e => console.log("Audio play deferred"));
+            audio.play().catch(() => {});
 
+            // 1. خروج المسجات الصغيرة من داخل الظرف
             setTimeout(() => {
-                triggerInitialFlyingLetters();
-                setTimeout(() => {
-                    envelopeParts.forEach(part => part.style.opacity = '0');
-                    setTimeout(() => {
-                        letter.style.display = 'block';
-                        // اختيارياً: تبدأ الرسائل المحيطة بعد ظهور الرسالة بفترة
-                        setTimeout(startDistributedLetters, 2000);
-                    }, 500);
-                }, 1500); 
-            }, 400); 
-        }
-
-        function triggerInitialFlyingLetters() {
-            const container = document.getElementById('flying-zone');
-            const numEnvelopes = window.innerWidth < 768 ? 40 : 80; // تقليل العدد للموبايل
-            for (let i = 0; i < numEnvelopes; i++) {
-                createLetter(container, 'fly-letter');
-            }
-        }
-
-        function createLetter(target, className) {
-            let letter = document.createElement('div');
-            letter.className = className;
-            
-            // حسابات عشوائية للأنيميشن
-            let angle = Math.random() * Math.PI * 2;
-            let distance = Math.random() * 500 + 300;
-            let endX = Math.cos(angle) * distance;
-            let endY = Math.sin(angle) * distance;
-
-            letter.style.left = "50%";
-            letter.style.top = "50%";
-            
-            letter.animate([
-                { transform: 'translate(-50%, -50%) scale(0.2) rotate(0deg)', opacity: 0 },
-                { opacity: 1, offset: 0.1 },
-                { transform: `translate(${endX}px, ${endY}px) scale(0.5) rotate(${Math.random()*720}deg)`, opacity: 0 }
-            ], {
-                duration: Math.random() * 3000 + 3000,
-                delay: Math.random() * 1000,
-                fill: 'forwards'
-            });
-
-            target.appendChild(letter);
-        }
-
-        function startDistributedLetters() {
-            const globalZone = document.getElementById('global-flying-zone');
-            setInterval(() => {
-                if(globalZone.children.length < 30) {
-                    let letter = document.createElement('div');
-                    letter.className = 'ambient-letter';
-                    let startX = Math.random() * 100;
-                    letter.style.left = startX + 'vw';
-                    letter.style.top = '-10vh';
-                    letter.style.opacity = '0.7';
+                const zone = document.getElementById('flying-zone');
+                for (let i = 0; i < 50; i++) {
+                    let p = document.createElement('div');
+                    p.className = 'fly-letter';
+                    zone.appendChild(p);
                     
-                    letter.animate([
-                        { transform: 'translateY(0) rotate(0deg)', opacity: 0.7 },
-                        { transform: `translate(${(Math.random()-0.5)*100}px, 110vh) rotate(720deg)`, opacity: 0 }
-                    ], {
-                        duration: 8000,
-                        easing: 'linear'
-                    });
-                    globalZone.appendChild(letter);
-                    setTimeout(() => letter.remove(), 8000);
+                    let angle = Math.random() * Math.PI * 2;
+                    let dist = Math.random() * 600 + 400;
+                    
+                    p.animate([
+                        { transform: 'translate(-50%, -50%) scale(0.1)', opacity: 0 },
+                        { opacity: 1, offset: 0.2 },
+                        { transform: `translate(${Math.cos(angle)*dist}px, ${Math.sin(angle)*dist}px) rotate(${Math.random()*1000}deg) scale(0.6)`, opacity: 0 }
+                    ], { duration: 4000, delay: Math.random() * 1000, fill: 'forwards' });
                 }
-            }, 500);
+            }, 600);
+
+            // 2. ظهور الرسالة الرئيسية ثم طيرانها
+            setTimeout(() => {
+                document.querySelectorAll('.envelope-part').forEach(el => el.style.opacity = '0');
+                letter.style.display = 'block';
+                letter.classList.add('letter-appear');
+
+                // بعد 8 ثواني من ظهورها، تطير الرسالة ويملأ الجو رسايل
+                setTimeout(() => {
+                    letter.classList.add('letter-fly-away');
+                    startAmbientLetters();
+                }, 8000);
+            }, 2000);
+        }
+
+        function startAmbientLetters() {
+            const gZone = document.getElementById('global-flying-zone');
+            setInterval(() => {
+                if(gZone.children.length < 40) {
+                    let l = document.createElement('div');
+                    l.className = 'fly-letter'; 
+                    l.style.left = Math.random() * 100 + 'vw';
+                    l.style.top = '-10vh';
+                    gZone.appendChild(l);
+                    l.animate([
+                        { transform: `translate(0, 0) rotate(0deg)`, opacity: 0.8 },
+                        { transform: `translate(${(Math.random()-0.5)*200}px, 110vh) rotate(720deg)`, opacity: 0 }
+                    ], { duration: 7000 });
+                    setTimeout(() => l.remove(), 7000);
+                }
+            }, 300);
         }
     </script>
 </body>
