@@ -18,7 +18,7 @@
 
         .developer-credit {
             position: fixed; bottom: 15px; right: 15px;
-            color: rgba(230, 207, 163, 0.5); font-size: 14px;
+            color: rgba(230, 207, 163, 0.4); font-size: 14px;
             z-index: 1000; letter-spacing: 1px; pointer-events: none;
         }
 
@@ -50,12 +50,9 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.8);
         }
 
-        /* بؤرة الانفجار - بالوسط تماماً */
         #magic-fountain {
             position: absolute; top: 50%; left: 50%;
-            width: 1px; height: 1px; 
-            z-index: 2; /* بين الخلف والوجه */
-            transform: translateZ(1px);
+            width: 1px; height: 1px; z-index: 2;
         }
 
         #envelope-front {
@@ -72,7 +69,6 @@
         }
         .open-flap { transform: rotateX(160deg); }
 
-        /* ستايل الرسايل الطائرة */
         .fly-letter {
             position: absolute; width: 65px; height: 45px;
             background: url('harrypotterletter.jpg') center/cover;
@@ -80,7 +76,7 @@
             opacity: 0; pointer-events: none;
         }
 
-        /* الدعوة الرئيسية */
+        /* الدعوة الرئيسية مع حركة طيران مستمرة */
         #letter-container {
             display: none; position: fixed; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
@@ -91,22 +87,33 @@
             box-sizing: border-box;
         }
 
-        .reveal { animation: letterIn 1.2s ease-out forwards; }
+        /* أنيميشن الظهور + الطيران المستمر (Floating) */
+        .reveal-and-float { 
+            animation: 
+                letterIn 1.2s ease-out forwards, 
+                continuousFloat 4s ease-in-out infinite 1.2s; 
+        }
+
         @keyframes letterIn {
-            0% { opacity: 0; transform: translate(-50%, -40%) scale(0.8); }
+            0% { opacity: 0; transform: translate(-50%, -30%) scale(0.8); }
             100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         }
 
-        .fly-away { animation: mainFly 2s ease-in forwards; }
+        @keyframes continuousFloat {
+            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+            50% { transform: translate(-50%, -55%) rotate(1deg); }
+        }
+
+        /* أنيميشن الرحيل النهائي */
+        .fly-away { animation: mainFly 2.5s ease-in forwards !important; }
         @keyframes mainFly {
-            100% { transform: translate(-50%, -120vh) rotate(15deg) scale(0.5); opacity: 0; }
+            100% { transform: translate(-50%, -150vh) rotate(20deg) scale(0.4); opacity: 0; }
         }
 
         .header h1 { font-size: 24px; margin: 0; color: #111; }
         .header h2 { font-size: 18px; margin: 5px 0; color: #4a0000; }
         .letter-content { font-size: 18px; line-height: 1.4; margin-top: 15px; text-align: justify; }
         .footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 20px; }
-        .signature { font-size: 18px; text-align: left; }
         .wax-seal { width: 55px; height: 55px; background: radial-gradient(circle, #8b0000, #4a0000); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #e6cfa3; font-family: 'Cinzel'; font-size: 20px; font-weight: bold; }
     </style>
 </head>
@@ -134,7 +141,7 @@
             <p>The ceremony will commence at exactly <strong>11:00 AM</strong> in the <strong>Martyr Al-Sadr Hall</strong>. Please do not be late.</p>
         </div>
         <div class="footer">
-            <div class="signature">Yours Sincerely,<br>Networks Department</div>
+            <div style="font-size: 18px; text-align: left;">Yours Sincerely,<br>Networks Department</div>
             <div class="wax-seal">IT</div>
         </div>
     </div>
@@ -156,49 +163,39 @@
             flap.classList.add('open-flap');
             audio.play().catch(() => {});
 
-            // 1. انفجار الرسايل من وسط (قلب) الظرف
+            // خروج الرسايل من وسط الظرف
             for (let i = 0; i < 80; i++) {
                 setTimeout(() => {
-                    createFountainLetter(fountain);
+                    const l = document.createElement('div');
+                    l.className = 'fly-letter';
+                    l.style.left = '0px'; l.style.top = '0px';
+                    fountain.appendChild(l);
+
+                    const x = (Math.random() - 0.5) * window.innerWidth * 1.6;
+                    const y = (Math.random() - 0.7) * window.innerHeight * 1.6;
+
+                    l.animate([
+                        { transform: 'translate(-50%, -50%) scale(0) rotate(0deg)', opacity: 0 },
+                        { opacity: 1, offset: 0.1 },
+                        { transform: `translate(${x}px, ${y}px) rotate(${Math.random()*720}deg) scale(0.7)`, opacity: 0 }
+                    ], { duration: 4000 + Math.random() * 2000, easing: 'ease-out' });
+
+                    setTimeout(() => l.remove(), 6000);
                 }, i * 20);
             }
 
-            // 2. ظهور الرسالة الرئيسية
+            // ظهور الدعوة وحركتها
             setTimeout(() => {
                 document.querySelectorAll('.envelope-part').forEach(p => p.style.opacity = '0');
                 letter.style.display = 'block';
-                letter.classList.add('reveal');
+                letter.classList.add('reveal-and-float');
 
-                // 3. بعد 12 ثانية تطير الدعوة ويبدأ المطر من فوق
+                // بعد 12 ثانية تطير وتروح
                 setTimeout(() => {
                     letter.classList.add('fly-away');
                     startRainFromTop();
                 }, 12000);
             }, 2000);
-        }
-
-        function createFountainLetter(parent) {
-            const l = document.createElement('div');
-            l.className = 'fly-letter';
-            l.style.left = '0px';
-            l.style.top = '0px';
-            parent.appendChild(l);
-
-            // اتجاهات الانفجار من الوسط
-            const x = (Math.random() - 0.5) * window.innerWidth * 1.5;
-            const y = (Math.random() - 0.7) * window.innerHeight * 1.5;
-            const rot = Math.random() * 720;
-
-            l.animate([
-                { transform: 'translate(-50%, -50%) scale(0) rotate(0deg)', opacity: 0 },
-                { opacity: 1, offset: 0.1 },
-                { transform: `translate(${x}px, ${y}px) rotate(${rot}deg) scale(0.7)`, opacity: 0 }
-            ], {
-                duration: 4000 + Math.random() * 2000,
-                easing: 'ease-out'
-            });
-
-            setTimeout(() => l.remove(), 6000);
         }
 
         function startRainFromTop() {
@@ -207,18 +204,14 @@
                 const l = document.createElement('div');
                 l.className = 'fly-letter';
                 l.style.left = Math.random() * 100 + 'vw';
-                l.style.top = '-10vh'; // يبدأ من فوق الشاشة
-                l.style.zIndex = '2001';
+                l.style.top = '-10vh';
                 zone.appendChild(l);
 
                 l.animate([
                     { transform: 'translateY(0) rotate(0deg)', opacity: 0 },
                     { opacity: 0.7, offset: 0.2 },
                     { transform: `translate(${(Math.random()-0.5)*200}px, 110vh) rotate(720deg)`, opacity: 0 }
-                ], { 
-                    duration: 8000 + Math.random() * 4000,
-                    easing: 'linear'
-                });
+                ], { duration: 8000 + Math.random() * 4000 });
 
                 setTimeout(() => l.remove(), 12000);
             }, 350);
